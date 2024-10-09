@@ -24,12 +24,12 @@ If you find our work useful for your research and applications, please cite usin
 
 ```bibtex
 @inproceedings{qiu2024psyguard,
-      title = "PsyGUARD: An Automated System for Suicide Detection and Risk Assessment in Psychological Counseling",
-      author = "Qiu, Huachuan and Ma, Lizhi and Lan, Zhenzhong",
-      booktitle = "Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing",
-      month = nov,
-      year = "2024",
-      address = "Miami, Florida",
-      publisher = "Association for Computational Linguistics",
+      title={PsyGUARD: An Automated System for Suicide Detection and Risk Assessment in Psychological Counseling},
+      author={Huachuan Qiu and Lizhi Ma and Zhenzhong Lan},
+      year={2024},
+      eprint={2409.20243},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2409.20243},
 }
 ```
