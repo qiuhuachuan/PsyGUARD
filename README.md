@@ -6,7 +6,13 @@
 
 **Dataset**:
 
-- [🤗 PsySUICIDE](https://huggingface.co/datasets/qiuhuachuan/PsySUICIDE)
+- Download from GitHub
+
+```Bash
+git clone https://github.com/qiuhuachuan/PsyGUARD.git
+```
+
+- Download from Hugging Face[🤗 PsySUICIDE](https://huggingface.co/datasets/qiuhuachuan/PsySUICIDE)
 
 ## Introduction
 
