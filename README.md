@@ -2,7 +2,7 @@
 
 ## 🎉🎉🎉 accepted to the EMNLP 2024 Main Conference
 
-**🔥🔥🔥 Paper**: https://arxiv.org/abs/2409.20243
+**🔥🔥🔥 Paper**: https://aclanthology.org/2024.emnlp-main.264/
 
 **Dataset**:
 
