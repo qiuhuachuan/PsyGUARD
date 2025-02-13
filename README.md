@@ -8,6 +8,10 @@
 
 - Download from Hugging Face[🤗 PsySUICIDE](https://huggingface.co/datasets/qiuhuachuan/PsySUICIDE)
 
+**Model**:
+
+- Download from Hugging Face[🤗 PsyGUARD-RoBERTa](https://huggingface.co/qiuhuachuan/PsyGUARD-RoBERTa)
+
 ## Introduction
 
 ![Automatic Evaluation](static/psyguard.png)
