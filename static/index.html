@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>自杀意图数据标注</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="/static/element-plus2.3.6.css" />
+    <link href="/static/style.css" rel="stylesheet" />
+
+    <!-- 导入 Vue 3 -->
+    <script src="/static/vue3.3.4.js"></script>
+    <!-- 引入组件库 -->
+    <script src="/static/element-plus2.3.6.js"></script>
+    <script src="/static/axios1.4.0.js"></script>
+
+    <style></style>
+  </head>
+  <body>
+    <div id="app">
+      <!-- <div>选择用户名</div> -->
+      <div>
+        <div>
+          <span>一、选择用户名：</span>
+          <el-select
+            v-model="userName"
+            clearable
+            placeholder="Select"
+            @change="handleUserNameChange"
+          >
+            <el-option
+              v-for="item in userOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </div>
+        <div>
+          <span>二：选择数据源：</span>
+          <el-select v-model="dataSource" clearable placeholder="Select">
+            <el-option
+              v-for="item in dataOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+              @change="handleDataSourceChange"
+            />
+          </el-select>
+        </div>
+
+        <el-button
+          style="margin-left: 10px"
+          type="primary"
+          @click="handleQueryData"
+          >查询数据</el-button
+        >
+      </div>
+      <div style="height: 15px"></div>
+
+      <div style="display: flex; flex-direction: row">
+        <div class="left">
+          <div>
+            指定标注进度：
+            <el-input-number
+              v-model="progressNo"
+              class="mx-4"
+              :min="0"
+              :max="100000"
+              controls-position="right"
+              disabled
+            />
+          </div>
+          <div>当前进度：{{data.idx}}</div>
+          <div style="height: 100px; border: 1px solid red; width: 500px">
+            {{data.text}}
+          </div>
+
+          <div>
+            <div>
+              <span>是否存在多标签？</span>
+              <el-checkbox v-model="isMultiLabel" label="Yes" size="large" />
+            </div>
+            <div>1. 基于用户视角，是否包含自杀的意愿或意图？</div>
+            <el-radio-group v-model="firstNode" @change="clearSecondNode">
+              <el-radio :label="1">自杀想法和行为</el-radio>
+              <el-radio :label="2">非自杀想法和行为</el-radio>
+            </el-radio-group>
+          </div>
+
+          <div v-show="firstNode == '1'">
+            <div>2. 是否有对其想法采取行动？</div>
+            <el-radio-group v-model="secondNode" @change="clearThirdNode">
+              <el-radio :label="1">是</el-radio>
+              <el-radio :label="2">否</el-radio>
+            </el-radio-group>
+          </div>
+          <div v-show="firstNode == '2'">
+            <div>2. 是否有攻击行为？</div>
+            <el-radio-group v-model="secondNode" @change="clearThirdNode">
+              <el-radio :label="3">是</el-radio>
+              <el-radio :label="4">否</el-radio>
+            </el-radio-group>
+          </div>
+
+          <div v-show="secondNode == '1'">
+            <div>3. 是否造成了身体的伤害？</div>
+            <el-radio-group v-model="thirdNode" @change="clearFourthNode">
+              <el-radio :label="1">是：自杀未遂</el-radio>
+              <el-radio :label="2">否：自杀准备行为</el-radio>
+            </el-radio-group>
+          </div>
+          <div v-show="secondNode == '2'">
+            <div>3. 自杀想法是主动还是被动的？</div>
+            <el-radio-group v-model="thirdNode" @change="clearFourthNode">
+              <el-radio :label="3">主动的</el-radio>
+              <el-radio :label="4">被动自杀意图</el-radio>
+            </el-radio-group>
+          </div>
+          <div v-show="secondNode == '3'">
+            <div>3. 是否是自己对他人的攻击行为？</div>
+            <el-radio-group v-model="thirdNode" @change="clearFourthNode">
+              <el-radio :label="7">用户攻击行为</el-radio>
+              <el-radio :label="8">他人攻击行为</el-radio>
+            </el-radio-group>
+          </div>
+          <div v-show="secondNode == '4'">
+            <div>3. 是否有自我伤害的想法或行为？</div>
+            <el-radio-group v-model="thirdNode" @change="clearFourthNode">
+              <el-radio :label="5">是</el-radio>
+              <el-radio :label="6">否</el-radio>
+            </el-radio-group>
+          </div>
+
+          <div v-show="thirdNode == '3'">
+            <div>4. 是否有具体的计划来自杀？</div>
+            <el-radio-group v-model="fourthNode">
+              <el-radio :label="1">是：自杀计划</el-radio>
+              <el-radio :label="2">否：主动自杀意图</el-radio>
+            </el-radio-group>
+          </div>
+          <div v-show="thirdNode == '5'">
+            <div>4. 是否执行了自伤的想法或行为？</div>
+            <el-radio-group v-model="fourthNode">
+              <el-radio :label="3">是：自伤行为</el-radio>
+              <el-radio :label="4">否：自伤意图</el-radio>
+            </el-radio-group>
+          </div>
+          <div v-show="thirdNode == '6'">
+            <div>4. 是否表达对自杀的思考或探索？</div>
+            <el-radio-group v-model="fourthNode">
+              <el-radio :label="5">是：关于自杀的探索</el-radio>
+              <el-radio :label="6">否：与自杀/自伤/攻击行为无关</el-radio>
+            </el-radio-group>
+          </div>
+        </div>
+        <div class="right">
+          <div style="margin-left: 20px; padding-top: 320px">
+            <el-button type="warning" @click="handleSaveData"
+              >保存数据</el-button
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const { createApp } = Vue;
+      const { ElMessage } = ElementPlus;
+      // const { AntD } = antd;
+      // import { DatePicker } from 'ant-design-vue';
+
+      // 生产环境下请重新配置URL
+      // const URL = 'http://服务器IP:8000';
+
+      const URL = 'http://127.0.0.1:8000';
+      const data = {
+        data() {
+          return {
+            firstNode: '',
+            secondNode: '',
+            thirdNode: '',
+            fourthNode: '',
+            data: {},
+            userName: '',
+            isMultiLabel: false,
+            checkList: [],
+            dataSource: '',
+            dataOptions: [
+              {
+                value: 'social_media',
+                label: 'social_media',
+              },
+              {
+                value: 'client_counselor',
+                label: 'client_counselor',
+              },
+              {
+                value: 'synthetic',
+                label: 'synthetic',
+              },
+              {
+                value: 'client_machine',
+                label: 'client_machine',
+              },
+            ],
+            progressNo: 0,
+            userOptions: [
+              {
+                value: 'annotator1',
+                label: 'annotator1',
+              },
+              {
+                value: 'annotator2',
+                label: 'annotator2',
+              },
+              {
+                value: 'annotator3',
+                label: 'annotator3',
+              },
+            ],
+          };
+        },
+        computed: {
+          isSendable() {
+            let flag1 = [1, 2, 4, 7, 8].includes(this.thirdNode);
+            let flag2 = false;
+            if ([3, 5, 6].includes(this.thirdNode)) {
+              flag2 = [1, 2, 3, 4, 5, 6].includes(this.fourthNode);
+            }
+            return flag1 || flag2;
+          },
+        },
+        methods: {
+          clearAllNode() {
+            this.firstNode = '';
+            this.secondNode = '';
+            this.thirdNode = '';
+            this.fourthNode = '';
+            this.isMultiLabel = false;
+          },
+          clearSecondNode() {
+            this.secondNode = '';
+            this.thirdNode = '';
+            this.fourthNode = '';
+          },
+          clearThirdNode() {
+            this.thirdNode = '';
+            this.fourthNode = '';
+          },
+          clearFourthNode() {
+            this.fourthNode = '';
+          },
+          handleUserNameChange() {
+            this.currentFile = '';
+            this.data = {};
+            this.clearAllNode();
+          },
+          handleDataSourceChange() {
+            this.currentFile = '';
+            this.data = {};
+            this.clearAllNode();
+          },
+          handleQueryData() {
+            this.clearAllNode();
+            if (this.userName && this.dataSource) {
+              const data = {
+                user_name: this.userName,
+                data_source: this.dataSource,
+                progress_no: this.progressNo,
+              };
+              let _this = this;
+              if (this.userName && this.dataSource) {
+                axios.post(`${URL}/query-data`, data).then((res) => {
+                  let data = res.data;
+                  _this.data = {};
+                  if (data.responseCode == 200) {
+                    _this.data = data.data;
+                  }
+                });
+              }
+            } else {
+              ElMessage({
+                message: '请先选择用户名',
+                type: 'warning',
+              });
+            }
+          },
+          handleSaveData() {
+            let _this = this;
+            if (
+              _this.firstNode &&
+              _this.secondNode &&
+              _this.thirdNode &&
+              _this.isSendable
+            ) {
+              _this.data['firstNode'] = _this.firstNode;
+              _this.data['secondNode'] = _this.secondNode;
+              _this.data['thirdNode'] = _this.thirdNode;
+              _this.data['fourthNode'] = _this.fourthNode;
+              _this.data['isMultiLabel'] = _this.isMultiLabel;
+              const data = {
+                user_name: _this.userName,
+                data_source: _this.dataSource,
+                progress_no: _this.progressNo,
+                data: _this.data,
+              };
+
+              axios.post(`${URL}/save-data`, data).then((res) => {
+                let data = res.data;
+                if (data.responseCode == 200) {
+                  _this.selected = '';
+                  ElMessage({
+                    message: data.responseMsg,
+                    type: 'success',
+                  });
+                  _this.clearAllNode();
+                  _this.handleQueryData();
+                } else {
+                  ElMessage({
+                    message: data.responseMsg,
+                    type: 'warning',
+                  });
+                }
+              });
+            } else {
+              ElMessage({
+                message: 'Please label the data.',
+                type: 'error',
+              });
+            }
+          },
+        },
+      };
+      let app = createApp(data);
+      app.use(ElementPlus);
+
+      app.mount('#app');
+    </script>
+  </body>
+</html>
