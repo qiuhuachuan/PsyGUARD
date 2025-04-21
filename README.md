@@ -14,7 +14,7 @@
 
 **Data Annotation**
 
-- Please the file `annotation.py` and the folder `static`
+- Please refer to the file `annotation.py` and the folder `static`
 
 ## Introduction
 
