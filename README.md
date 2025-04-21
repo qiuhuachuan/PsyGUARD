@@ -24,7 +24,7 @@ As awareness of mental health issues grows, online counseling support services a
 
 ## Release
 
-- [2024/10/9] 🔥 We release the dataset.
+- [2024/10/9] 🔥 We have released the dataset, model, and code for data annotation. If you have any questions, feel free to ask me.
 
 ## Citation
 
