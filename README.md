@@ -12,6 +12,10 @@
 
 - Download from Hugging Face[🤗 PsyGUARD-RoBERTa](https://huggingface.co/qiuhuachuan/PsyGUARD-RoBERTa)
 
+**Data Annotation**
+
+- Please the file `annotation.py` and the folder `static`
+
 ## Introduction
 
 ![Automatic Evaluation](static/psyguard.png)
